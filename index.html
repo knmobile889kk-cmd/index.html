@@ -1,1 +1,88 @@
+<!doctype html>
 
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ต้าไอ้อ้วน</title>
+  <style>
+    :root{--bg1:#0f172a;--bg2:#0b1220;--accent:#ff6b6b}
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans Thai','Sarabun',sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2));color:#fff}
+    .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.02));padding:3rem;border-radius:1rem;box-shadow:0 8px 30px rgba(2,6,23,0.6);text-align:center;max-width:720px;width:100%}
+    h1{font-size:clamp(36px,8vw,96px);line-height:0.95;margin:0 0 1rem;text-transform:none;letter-spacing:1px}
+    p{margin:0 0 1.5rem;opacity:0.8}
+    .controls{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center}
+    button{background:linear-gradient(90deg,var(--accent),#ffb86b);border:0;padding:.6rem 1rem;border-radius:.6rem;font-weight:600;cursor:pointer;box-shadow:0 6px 18px rgba(255,107,107,0.12);transition:transform .12s ease}
+    button:active{transform:translateY(1px)}
+    .small{padding:.45rem .8rem;font-size:.95rem}
+    .input{width:100%;max-width:480px;padding:.6rem 1rem;border-radius:.6rem;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit;font-size:1.05rem}
+    .footer{margin-top:1rem;font-size:.9rem;opacity:.7}
+    @media (max-width:520px){.card{padding:2rem}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1 id="title">ต้าไอ้อ้วน</h1>
+      <p>ตัวอย่างหน้าเว็บที่แสดงข้อความตามที่คุณขอ — เปลี่ยนข้อความได้ หรือคัดลอกไปใช้</p>
+      <div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap">
+        <input id="txt" class="input" value="ต้าไอ้อ้วน" aria-label="ข้อความ" />
+      </div>
+      <div class="controls" style="margin-top:1rem">
+        <button id="update">อัปเดตข้อความ</button>
+        <button id="copy" class="small">คัดลอก</button>
+        <button id="glow" class="small">สลับแสง</button>
+        <button id="download" class="small">ดาวน์โหลด HTML</button>
+      </div>
+      <div class="footer">ถ้าต้องการสไตล์อื่น ๆ (สี ฟอนต์ หรือแอนิเมชัน) บอกผมได้เลย</div>
+    </div>
+  </div>  <script>
+    const title = document.getElementById('title');
+    const txt = document.getElementById('txt');
+    const update = document.getElementById('update');
+    const copyBtn = document.getElementById('copy');
+    const glowBtn = document.getElementById('glow');
+    const download = document.getElementById('download');
+    let glowing = false;
+
+    update.addEventListener('click', ()=>{
+      const v = txt.value || 'ต้าไอ้อ้วน';
+      title.textContent = v;
+    });
+
+    copyBtn.addEventListener('click', async ()=>{
+      try{
+        await navigator.clipboard.writeText(title.textContent);
+        copyBtn.textContent = 'คัดลอกแล้ว!';
+        setTimeout(()=>copyBtn.textContent='คัดลอก',1200);
+      }catch(e){
+        alert('คัดลอกไม่สำเร็จ — ใช้ Ctrl/Cmd+C แทน');
+      }
+    });
+
+    glowBtn.addEventListener('click', ()=>{
+      glowing = !glowing;
+      if(glowing){
+        title.style.textShadow = '0 6px 30px rgba(255,107,107,0.35), 0 2px 8px rgba(255,107,107,0.2)';
+        glowBtn.textContent = 'ปิดแสง';
+      }else{
+        title.style.textShadow = 'none';
+        glowBtn.textContent = 'สลับแสง';
+      }
+    });
+
+    download.addEventListener('click', ()=>{
+      const blob = new Blob([document.documentElement.outerHTML],{type:'text/html'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'ta_page.html';
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    });
+
+    // ให้ Enter ใน input ทำงานเหมือนกดอัปเดต
+    txt.addEventListener('keydown', e=>{ if(e.key==='Enter') update.click(); });
+  </script></body>
+</html>
